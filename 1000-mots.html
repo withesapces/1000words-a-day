@@ -1,161 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LexiStep</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #3b82f6;
-      --secondary-color: #10b981;
-      --text-color: #111827;
-      --background-color: #f3f4f6;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .app-container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: white;
-      box-shadow: 
-        0 25px 50px -12px rgba(0, 0, 0, 0.1),
-        0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      border: 3px solid var(--text-color);
-      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid var(--text-color);
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--primary-color);
-    }
-
-    .daily-challenge {
-      background-color: var(--secondary-color);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-weight: bold;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      border: 2px solid var(--text-color);
-      box-shadow: 4px 4px 0 var(--text-color);
-    }
-
-    .writing-area {
-      position: relative;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 300px;
-      padding: 1rem;
-      border: 2px solid var(--text-color);
-      border-radius: 8px;
-      font-size: 1rem;
-      line-height: 1.6;
-      resize: vertical;
-      background-color: white;
-      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-    }
-
-    .word-count {
-      position: absolute;
-      bottom: -2rem;
-      right: 0;
-      font-size: 0.9rem;
-      color: var(--primary-color);
-    }
-
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 3rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: 2px solid var(--text-color);
-      background-color: white;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 4px 4px 0 var(--text-color);
-    }
-
-    .btn:hover {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0 var(--text-color);
-    }
-
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    /* Dark mode styles */
-    body.dark-mode {
-      --primary-color: #60a5fa;
-      --secondary-color: #34d399;
-      --text-color: #f3f4f6;
-      --background-color: #1f2937;
-    }
-
-    body.dark-mode .app-container {
-      background: #374151;
-      border-color: var(--text-color);
-      box-shadow: 
-        0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 10px 15px -3px rgba(0, 0, 0, 0.5);
-    }
-
-    body.dark-mode textarea {
-      background-color: #4b5563;
-      color: var(--text-color);
-      border-color: var(--text-color);
-    }
-
-    @media (max-width: 768px) {
-      .app-container {
-        padding: 1rem;
-        margin: 0 1rem;
-      }
-      .action-buttons {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .btn {
-        width: 100%;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="app-container">
     <header class="header">
@@ -170,60 +23,305 @@
       Tap "New Challenge" to start your writing journey
     </div>
 
+    <div class="goal-selector">
+      <label for="goal-range">Daily word count goal: <span id="goal-value">200</span></label>
+      <input type="range" id="goal-range" min="200" max="1000" step="100" value="200">
+    </div>    
+
     <div class="writing-area">
       <textarea placeholder="Start writing your thoughts..."></textarea>
-      <div class="word-count" id="word-count">Words: 0</div>
+      <div id="word-count">Words: 0</div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+        <div class="milestone" data-milestone="50">50</div>
+        <div class="milestone" data-milestone="100">100</div>
+        <div class="milestone" data-milestone="150">150</div>
+        <div class="milestone" data-milestone="200">200</div>
+      </div>
     </div>
 
     <div class="action-buttons">
       <button class="btn" id="generate-topic">New Challenge</button>
+      <!-- Le bouton "Save Progress" déclenche maintenant la modale -->
       <button class="btn btn-primary" id="save-text">Save Progress</button>
     </div>
   </div>
 
+  <!-- Modale pour copier la rédaction -->
+  <div id="copy-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>The WebApp is currently in V0. The save feature is not yet available.</p>
+      <p>
+        To save your writing, simply click the button below to copy the text to your clipboard, then paste it into a
+        post on Hive.
+      </p>
+      <button id="copy-btn" class="btn btn-copy">Copy the text</button>
+      <!-- Nouveau bouton caché par défaut -->
+      <button id="redirect-inleo" class="btn" style="display: none;">Publish on InLeo</button>
+    </div>
+  </div>
+
+
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-    const challenges = [
-      "Design the future of urban mobility",
-      "Imagine a world without digital screens",
-      "Describe a breakthrough in human-AI collaboration",
-      "Explore the emotional landscape of a digital nomad",
-      "Predict the next global cultural revolution"
-    ];
+    // --- Variables et éléments principaux ---
+    // Utilisez "let" pour que maxWords soit modifiable via le slider
+    let maxWords = 200;
+    const progressFill = document.querySelector('.progress-fill');
+    const milestoneElements = document.querySelectorAll('.milestone');
+    const goalRange = document.getElementById('goal-range');
+    const goalValue = document.getElementById('goal-value');
     
+    const challenges = [
+      "Describe your ideal day with no constraints.",
+      "If you could talk to your 10-year-old self, what would you say?",
+      "Tell a funny anecdote that happened to you.",
+      "If you could have a superpower, which one would you choose and why?",
+      "Describe your favorite place and why it is special to you.",
+      "Imagine you find a magical object on the street. What does it do?",
+      "If you had to live in a book, which one would you choose and why?",
+      "Describe the best culinary experience you've had.",
+      "If you won a million euros tomorrow, what would be the first thing you'd do?",
+      "What is one habit you would like to change and why?",
+      "If you could have dinner with a famous person, who would it be?",
+      "Tell a childhood memory that makes you smile.",
+      "What would you do if you could go back in time for one day?",
+      "Describe your dream house.",
+      "If you had to create a new holiday, what would it be?",
+      "Imagine a world where animals can talk. What would your cat/dog say to you?",
+      "Describe an invention that could make daily life easier.",
+      "If you could instantly learn a skill, which one would you choose?",
+      "Describe your last weird dream in detail.",
+      "Imagine a perfect day without technology.",
+      "If you had to sum up your personality in three words, what would they be?",
+      "Write a letter to your future self in 10 years.",
+      "Describe a meeting that changed your perspective on life.",
+      "Imagine you become invisible for a day. What do you do?",
+      "If you could switch lives with someone for a week, who would you choose?",
+      "Describe the last time you felt truly happy.",
+      "If you could travel to the future, what era would you like to see?",
+      "If you could live in a movie, which one would it be and why?",
+      "Describe a perfect rainy day.",
+      "If you could create a new rule for the whole world, what would it be?",
+      "What does happiness truly mean to you?",
+      "How will artificial intelligence transform our lives?",
+      "Imagine a society where money does not exist.",
+      "Explain a complex concept in simple terms (e.g., economy, quantum physics).",
+      "How do you handle failure and learn from it?",
+      "What book has most influenced your view of the world?",
+      "Describe a utopia and a dystopia based on your vision.",
+      "What does it mean to succeed in life?",
+      "Imagine a world where no one ever lies.",
+      "Why do some people love taking risks while others avoid them?",
+      "If we could live forever, would it be progress or a curse?",
+      "Do you think creativity is innate or acquired?",
+      "Describe an experience where you had to step out of your comfort zone.",
+      "How would you define love in a universal way?",
+      "If you could create a new school subject, what would it be and why?",
+      "Imagine a world where humans communicate only through telepathy.",
+      "What do you think of social media? Is it a blessing or a curse?",
+      "How has technology changed the way we think?",
+      "Describe a major historical event from the perspective of an anonymous witness.",
+      "What are the essential qualities of a great leader?",
+      "If you could change just one law in your country, what would it be?",
+      "Describe a future where humanity has colonized Mars.",
+      "Why is art so important to humanity?",
+      "How can solitude be a strength rather than a weakness?",
+      "Describe a world where all work is automated.",
+      "If you could live a parallel life, what would it be?",
+      "What are the ethical challenges of technological advancements?",
+      "How do you think culture and identity are built?",
+      "Why do some works of art become timeless?",
+      "If you could give humanity one piece of advice, what would it be?",
+      "How would you define freedom?",
+      "What makes a person memorable?",
+      "Why do some ideas take time to be accepted by society?",
+      "If you could change one aspect of your country, what would it be and why?",
+      "How does music influence our mindset?",
+      "What is the greatest challenge humanity faces today?",
+      "Describe a future without fossil fuels.",
+      "How do languages shape the way we think?",
+      "If you could rewrite part of history, what would it be and why?",
+      "Can artificial intelligence ever develop consciousness?",
+      "Does free will truly exist, or are we determined?",
+      "What is the nature of reality?",
+      "Describe a world where the concept of time does not exist.",
+      "Are mathematics invented or discovered?",
+      "How can beauty be objectively defined?",
+      "Can war ever be justified?",
+      "Are we alone in the universe? Develop your hypotheses.",
+      "Is history truly objective, or is it influenced by those who write it?",
+      "Imagine an extraterrestrial civilization and its fundamental laws.",
+      "How do emotions influence our decision-making?",
+      "Can technology ever surpass human intelligence?",
+      "If everything were possible, what would be the ultimate meaning of existence?",
+      "How can we differentiate between absolute good and evil?",
+      "Can artificial intelligence replace art?",
+      "What would a fully equal society look like?",
+      "If we could upload our consciousness into a computer, would we still be human?",
+      "Describe a possible end of humanity and how it could be avoided.",
+      "Can we truly understand another human being?",
+      "What would be the best form of governance for the future?",
+      "Is emotional intelligence more important than logical intelligence?",
+      "How would you define the soul of an individual?",
+      "Do dreams have deep meaning, or are they just random?",
+      "Can we ever attain absolute knowledge?",
+      "Is democracy the perfect system or just the best among flawed ones?",
+      "Would an artificial living being be morally equivalent to a human?",
+      "What would be the philosophical consequences of discovering an afterlife?",
+      "How could a civilization function without money?",
+      "Are we already in a simulation without knowing it?"
+    ];
+  
     const generateTopicBtn = document.getElementById("generate-topic");
     const dailyTopic = document.getElementById("daily-topic");
     const textarea = document.querySelector('textarea');
     const wordCountEl = document.getElementById('word-count');
     const saveBtn = document.getElementById('save-text');
     const darkModeToggle = document.getElementById('toggle-dark-mode');
-
+  
+    // --- Désactivation du copier/coller dans la zone de texte ---
+    textarea.addEventListener('paste', (e) => {
+      e.preventDefault();
+      alert("Copy-pasting is disabled in this area.");
+    });
+    textarea.addEventListener('copy', (e) => {
+      e.preventDefault();
+      alert("Copying is disabled.");
+    });
+    textarea.addEventListener('cut', (e) => {
+      e.preventDefault();
+      alert("Cutting is disabled.");
+    });
+  
+    // --- Génération aléatoire d'un sujet ---
     generateTopicBtn.addEventListener('click', () => {
       const topic = challenges[Math.floor(Math.random() * challenges.length)];
       dailyTopic.textContent = topic;
     });
-
-    saveBtn.addEventListener('click', () => {
-      alert('Progress saved! Keep pushing your creative boundaries.');
+  
+    // --- Fonction de mise à jour des paliers (milestones) ---
+    function updateMilestones() {
+      // Définir des paliers à 25%, 50%, 75% et 100%
+      const milestones = [0.25, 0.5, 0.75, 1];
+      milestoneElements.forEach((milestone, index) => {
+        const milestoneValue = Math.round(maxWords * milestones[index]);
+        milestone.setAttribute('data-milestone', milestoneValue);
+        milestone.textContent = milestoneValue;
+        milestone.style.left = (milestones[index] * 100) + '%';
+        milestone.style.transform = (milestones[index] === 1 ? 'translateX(-100%)' : 'translateX(-50%)');
+        // Réinitialiser le déclenchement pour permettre de nouvelles animations
+        milestone.classList.remove('triggered');
+      });
+    }
+  
+    // --- Mise à jour de l'objectif via le range ---
+    goalRange.addEventListener('input', function() {
+      maxWords = parseInt(this.value, 10);
+      goalValue.textContent = this.value;
+      updateMilestones();
     });
-
+  
+    // Mise à jour initiale des milestones
+    updateMilestones();
+  
+    // --- Mise à jour du compteur de mots et de la barre de progression ---
     textarea.addEventListener('input', () => {
-      const wordCount = textarea.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+      const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+      const wordCount = words.length;
       wordCountEl.textContent = `Words: ${wordCount}`;
-
-      if (wordCount >= 50) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { x: 0.5, y: 0.6 }
-        });
-      }
+  
+      // Calcul du pourcentage de progression en fonction de l'objectif sélectionné
+      const progressPercent = Math.min((wordCount / maxWords) * 100, 100);
+      progressFill.style.width = progressPercent + '%';
+  
+      // Déclenchement des animations pour chaque palier atteint
+      milestoneElements.forEach(milestone => {
+        const milestoneValue = parseInt(milestone.getAttribute('data-milestone'), 10);
+        if (wordCount >= milestoneValue && !milestone.classList.contains('triggered')) {
+          milestone.classList.add('active', 'triggered');
+          try {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { x: 0.5, y: 0.6 }
+            });
+          } catch (e) {
+            console.error("Erreur lors du déclenchement des confettis :", e);
+          }
+          setTimeout(() => {
+            milestone.classList.remove('active');
+          }, 500);
+        }
+      });
     });
-
+  
+    // --- Dark mode ---
     darkModeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
       darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
     });
+  
+    // --- Gestion de la modale pour "Save Progress" ---
+    saveBtn.addEventListener('click', () => {
+      document.getElementById("copy-modal").style.display = "block";
+    });
+  
+    const modal = document.getElementById("copy-modal");
+    const closeModal = document.querySelector(".modal .close");
+    const copyBtn = document.getElementById("copy-btn");
+  
+    // Fermeture de la modale via la croix
+    closeModal.addEventListener('click', () => {
+      modal.style.display = "none";
+    });
+  
+    // Fermeture de la modale si l'utilisateur clique en dehors
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  
+    // --- Fonction de copie du texte avec ajout d'un bandeau promotionnel ---
+    copyBtn.addEventListener('click', () => {
+      const userText = textarea.value;
+      const promoBanner = `
+  ---
+  *This post was written with **LexiStep** - The daily writing accelerator*
+  
+  LexiStep is a WebApp that helps you build a regular writing habit by providing thought-provoking topics and a goal of ${maxWords} words per day. Currently in version 0, it is actively being developed to offer even more features!
+  
+  Created by [@genesisledger](https://hive.blog/@genesisledger) on Hive
+  `;
+      const textToCopy = userText + "\n" + promoBanner;
+  
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        // Feedback visuel lors de la copie
+        copyBtn.textContent = "Copied!";
+        copyBtn.classList.add("copied");
+  
+        // Afficher le bouton de redirection vers InLeo
+        const redirectBtn = document.getElementById("redirect-inleo");
+        redirectBtn.style.display = "inline-block";
+        redirectBtn.addEventListener('click', () => {
+          window.location.href = "https://inleo.io/publish";
+        });
+  
+        setTimeout(() => {
+          copyBtn.textContent = "Copy the text";
+          copyBtn.classList.remove("copied");
+        }, 2000);
+      }).catch(err => {
+        console.error('Error while copying:', err);
+      });
+    });
   </script>
+  
 </body>
+
 </html>

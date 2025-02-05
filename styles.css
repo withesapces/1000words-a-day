@@ -1,0 +1,321 @@
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #10b981;
+    --text-color: #111827;
+    --background-color: #f3f4f6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+
+.app-container {
+    width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.1),
+        0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    border: 3px solid var(--text-color);
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--text-color);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+.daily-challenge {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--text-color);
+    box-shadow: 4px 4px 0 var(--text-color);
+}
+
+.writing-area {
+    position: relative;
+}
+
+textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 1rem;
+    border: 2px solid var(--text-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    background-color: white;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--text-color);
+    background-color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 var(--text-color);
+}
+
+.btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--text-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* --- Barre de progression --- */
+.progress-container {
+    margin-top: 1.5rem;
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 26px;
+    background: white;
+    border: 2px solid var(--text-color);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--text-color);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+/* Styles pour les paliers */
+.milestone {
+    position: absolute;
+    top: 1px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--secondary-color);
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: white;
+    transition: transform 0.3s;
+}
+
+/* Positionnement des paliers sur la barre */
+.milestone[data-milestone="50"] {
+    left: 25%;
+    transform: translateX(-50%);
+}
+
+.milestone[data-milestone="100"] {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.milestone[data-milestone="150"] {
+    left: 75%;
+    transform: translateX(-50%);
+}
+
+.milestone[data-milestone="200"] {
+    left: 100%;
+    transform: translateX(-100%);
+}
+
+/* Animation d'activation des paliers */
+.milestone.active {
+    animation: milestone-bounce 0.5s ease;
+}
+
+/* --- Styles de la modale --- */
+.modal {
+    display: none;
+    /* Masqué par défaut */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 2rem;
+    border: 3px solid var(--text-color);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 4px 4px 0 var(--text-color);
+    text-align: center;
+}
+
+.modal-content p {
+    margin-bottom: 1rem;
+}
+
+.modal .close {
+    color: var(--text-color);
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Style spécifique pour le bouton de copie dans la modale */
+.btn-copy {
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid var(--text-color);
+    transition: background-color 0.2s;
+}
+
+.btn-copy.copied {
+    background-color: var(--secondary-color);
+}
+
+/* Adaptation pour le dark mode */
+body.dark-mode .modal-content {
+    background: #374151;
+    color: var(--text-color);
+    border-color: var(--text-color);
+    box-shadow: 4px 4px 0 var(--text-color);
+}
+
+.goal-selector {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .goal-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+  }
+  
+  #goal-range {
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 2px solid var(--text-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  
+  /* Personnalisation du curseur (exemple simple) */
+  #goal-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+
+
+@keyframes milestone-bounce {
+    0% {
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.3);
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+
+/* Dark mode styles */
+body.dark-mode {
+    --primary-color: #60a5fa;
+    --secondary-color: #34d399;
+    --text-color: #f3f4f6;
+    --background-color: #1f2937;
+}
+
+body.dark-mode .app-container {
+    background: #374151;
+    border-color: var(--text-color);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode textarea {
+    background-color: #4b5563;
+    color: var(--text-color);
+    border-color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: 1rem;
+        margin: 1rem 1rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

@@ -26,7 +26,7 @@
     <div class="goal-selector">
       <label for="goal-range">Daily word count goal: <span id="goal-value">200</span></label>
       <input type="range" id="goal-range" min="200" max="1000" step="100" value="200">
-    </div>    
+    </div>
 
     <div class="writing-area">
       <textarea placeholder="Start writing your thoughts..."></textarea>
@@ -75,7 +75,7 @@
     const milestoneElements = document.querySelectorAll('.milestone');
     const goalRange = document.getElementById('goal-range');
     const goalValue = document.getElementById('goal-value');
-    
+
     const challenges = [
       "Describe your ideal day with no constraints.",
       "If you could talk to your 10-year-old self, what would you say?",
@@ -176,14 +176,14 @@
       "How could a civilization function without money?",
       "Are we already in a simulation without knowing it?"
     ];
-  
+
     const generateTopicBtn = document.getElementById("generate-topic");
     const dailyTopic = document.getElementById("daily-topic");
     const textarea = document.querySelector('textarea');
     const wordCountEl = document.getElementById('word-count');
     const saveBtn = document.getElementById('save-text');
     const darkModeToggle = document.getElementById('toggle-dark-mode');
-  
+
     // --- Désactivation du copier/coller dans la zone de texte ---
     textarea.addEventListener('paste', (e) => {
       e.preventDefault();
@@ -197,13 +197,13 @@
       e.preventDefault();
       alert("Cutting is disabled.");
     });
-  
+
     // --- Génération aléatoire d'un sujet ---
     generateTopicBtn.addEventListener('click', () => {
       const topic = challenges[Math.floor(Math.random() * challenges.length)];
       dailyTopic.textContent = topic;
     });
-  
+
     // --- Fonction de mise à jour des paliers (milestones) ---
     function updateMilestones() {
       // Définir des paliers à 25%, 50%, 75% et 100%
@@ -218,27 +218,27 @@
         milestone.classList.remove('triggered');
       });
     }
-  
+
     // --- Mise à jour de l'objectif via le range ---
-    goalRange.addEventListener('input', function() {
+    goalRange.addEventListener('input', function () {
       maxWords = parseInt(this.value, 10);
       goalValue.textContent = this.value;
       updateMilestones();
     });
-  
+
     // Mise à jour initiale des milestones
     updateMilestones();
-  
+
     // --- Mise à jour du compteur de mots et de la barre de progression ---
     textarea.addEventListener('input', () => {
       const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
       const wordCount = words.length;
       wordCountEl.textContent = `Words: ${wordCount}`;
-  
+
       // Calcul du pourcentage de progression en fonction de l'objectif sélectionné
       const progressPercent = Math.min((wordCount / maxWords) * 100, 100);
       progressFill.style.width = progressPercent + '%';
-  
+
       // Déclenchement des animations pour chaque palier atteint
       milestoneElements.forEach(milestone => {
         const milestoneValue = parseInt(milestone.getAttribute('data-milestone'), 10);
@@ -259,34 +259,34 @@
         }
       });
     });
-  
+
     // --- Dark mode ---
     darkModeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
       darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
     });
-  
+
     // --- Gestion de la modale pour "Save Progress" ---
     saveBtn.addEventListener('click', () => {
       document.getElementById("copy-modal").style.display = "block";
     });
-  
+
     const modal = document.getElementById("copy-modal");
     const closeModal = document.querySelector(".modal .close");
     const copyBtn = document.getElementById("copy-btn");
-  
+
     // Fermeture de la modale via la croix
     closeModal.addEventListener('click', () => {
       modal.style.display = "none";
     });
-  
+
     // Fermeture de la modale si l'utilisateur clique en dehors
     window.addEventListener('click', (event) => {
       if (event.target === modal) {
         modal.style.display = "none";
       }
     });
-  
+
     // --- Fonction de copie du texte avec ajout d'un bandeau promotionnel ---
     copyBtn.addEventListener('click', () => {
       const userText = textarea.value;
@@ -299,19 +299,19 @@
   Created by [@genesisledger](https://hive.blog/@genesisledger) on Hive
   `;
       const textToCopy = userText + "\n" + promoBanner;
-  
+
       navigator.clipboard.writeText(textToCopy).then(() => {
         // Feedback visuel lors de la copie
         copyBtn.textContent = "Copied!";
         copyBtn.classList.add("copied");
-  
+
         // Afficher le bouton de redirection vers InLeo
         const redirectBtn = document.getElementById("redirect-inleo");
         redirectBtn.style.display = "inline-block";
         redirectBtn.addEventListener('click', () => {
           window.location.href = "https://inleo.io/publish";
         });
-  
+
         setTimeout(() => {
           copyBtn.textContent = "Copy the text";
           copyBtn.classList.remove("copied");
@@ -321,7 +321,7 @@
       });
     });
   </script>
-  
+
 </body>
 
 </html>

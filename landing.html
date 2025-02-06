@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark" style="color-scheme: dark;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LexiStep – 1 000 mots par jour pour un esprit en santé</title>
+    <!-- Lien vers Tailwind CSS depuis CDN (version 3.x) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+
+        /* ============================== */
+        /*        Container Global        */
+        /* ============================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ============================== */
+        /*         Section HERO           */
+        /* ============================== */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            background: var(--background-color);
+            /* Fond en damier léger inspiré du style neobrutal */
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.2) 1px, transparent 1px);
+            background-size: 70px 70px;
+            padding: 2rem;
+            border: 3px solid var(--text-color);
+            border-radius: 12px;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.1),
+                0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        header button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--text-color);
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 var(--text-color);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        header button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--text-color);
+        }
+
+        /* ============================== */
+        /*      Bouton de bascule thème   */
+        /* ============================== */
+        #theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 var(--text-color);
+            transition: transform 0.2s;
+        }
+
+        #theme-toggle:hover {
+            transform: translate(2px, 2px);
+        }
+
+        #theme-toggle svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        /* ============================== */
+        /*          Adaptation Mobile     */
+        /* ============================== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        /* ============================== */
+        /*         Dark Mode Styles       */
+        /* ============================== */
+        body.dark-mode {
+            --primary-color: #60a5fa;
+            --secondary-color: #34d399;
+            --text-color: #f3f4f6;
+            --background-color: #1f2937;
+        }
+
+        body.dark-mode {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        body.dark-mode header {
+            background: var(--background-color);
+            border-color: var(--text-color);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-gray-900">
+    <!-- HEADER / HERO -->
+    <header>
+        <div class="container mx-auto px-5 py-28 lg:py-40">
+            <h1 class="text-3xl font-bold md:text-4xl lg:text-5xl text-blue-500">LexiStep</h1>
+            <p class="mt-8 text-lg md:text-xl lg:text-2xl leading-relaxed">
+                10 000 pas pour le corps, 1 000 mots pour l’esprit.
+            </p>
+            <button
+                class="mt-12 inline-flex items-center justify-center bg-blue-500 text-white border-2 border-blue-700 shadow-md px-8 py-3 rounded-lg hover:translate-x-1 hover:translate-y-1 transition-transform">
+                Commencez Gratuitement
+            </button>
+        </div>
+    </header>
+
+    <script>
+        // Script de bascule du thème
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+
+</html>

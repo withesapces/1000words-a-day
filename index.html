@@ -1,134 +1,208 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LexiStep</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LexiStep</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Header Section -->
-        <header class="header">
-            <div class="logo">LexiStep</div>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <div>Daily Writing Accelerator</div>
-                <button id="toggle-dark-mode" class="btn">Dark Mode</button>
-            </div>
-        </header>
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="logo">LexiStep</div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div>Daily Writing Accelerator</div>
+        <button id="toggle-dark-mode" class="btn">Dark Mode</button>
+      </div>
+    </header>
 
-        <!-- Challenge Section -->
-        <div class="daily-challenge" id="daily-topic">
-            Tap "New Challenge" to start your writing journey
+    <!-- Challenge Section -->
+    <div class="challenge-section">
+      <div class="challenge-controls">
+        <div class="difficulty-selector">
+          <label for="difficulty"></label>
+          <select id="difficulty" class="difficulty-select">
+            <option value="easy">Easy - Personal experiences & descriptions</option>
+            <option value="medium">Medium - Imagination & reflection</option>
+            <option value="hard">Hard - Philosophy & complex concepts</option>
+          </select>
         </div>
-
-        <!-- Goal Section -->
-        <div class="goal-selector">
-            <label for="goal-range">Daily word count goal: <span id="goal-value">200</span></label>
-            <input type="range" id="goal-range" min="200" max="1000" step="100" value="200">
-        </div>
-
-        <!-- Writing Section -->
-        <div class="writing-area">
-            <textarea placeholder="Start writing your thoughts..."></textarea>
-            <div id="word-count">Words: 0</div>
-        </div>
-
-        <!-- Progress Section -->
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-                <div class="milestone" data-milestone="50">50</div>
-                <div class="milestone" data-milestone="100">100</div>
-                <div class="milestone" data-milestone="150">150</div>
-                <div class="milestone" data-milestone="200">200</div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="btn" id="generate-topic">New Challenge</button>
-            <button class="btn btn-primary" id="save-text">Save Progress</button>
-        </div>
+        <button class="btn" id="generate-topic">New Challenge</button>
+      </div>
+      <div class="daily-challenge" id="daily-topic">
+        Tap "New Challenge" to start your writing journey
+      </div>
     </div>
 
-    <!-- Save Modal -->
-    <div id="copy-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>The WebApp is currently in V0. The save feature is not yet available.</p>
-            <p>To save your writing, simply click the button below to copy the text to your clipboard, then paste it into a post on Hive.</p>
-            <button id="copy-btn" class="btn btn-copy">Copy the text</button>
-            <button id="redirect-inleo" class="btn" style="display: none;">Publish on InLeo</button>
-        </div>
+    <!-- Goal Section -->
+    <div class="goal-selector">
+      <label for="goal-range">Daily word count goal: <span id="goal-value">200</span></label>
+      <input type="range" id="goal-range" min="200" max="1000" step="100" value="200">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script>
-        // Constants
-        const CHALLENGES = {
-            easy: [
-                "Describe your ideal day with no constraints.",
-                "Tell a funny anecdote that happened to you.",
-                "Describe your favorite place and why it is special to you.",
-                "Describe the best culinary experience you've had.",
-                "Tell a childhood memory that makes you smile.",
-                "Describe your dream house.",
-                "Describe your last weird dream in detail.",
-                "Describe a perfect rainy day.",
-                "What makes you happy?",
-                "Write about your favorite hobby."
-            ],
-            medium: [
-                "If you could talk to your 10-year-old self, what would you say?",
-                "If you could have a superpower, which one would you choose and why?",
-                "Imagine you find a magical object on the street. What does it do?",
-                "If you had to live in a book, which one would you choose and why?",
-                "What would you do if you could go back in time for one day?",
-                "If you could create a new holiday, what would it be?",
-                "Imagine a world where animals can talk. What would your cat/dog say to you?",
-                "How has technology changed our daily lives?",
-                "What do you think of social media? Is it a blessing or a curse?",
-                "How does music influence our mindset?"
-            ],
-            hard: [
-                "How will artificial intelligence transform our lives?",
-                "Imagine a society where money does not exist.",
-                "What are the ethical challenges of technological advancements?",
-                "Can artificial intelligence ever develop consciousness?",
-                "Are we alone in the universe? Develop your hypotheses.",
-                "If we could upload our consciousness into a computer, would we still be human?",
-                "Is democracy the perfect system or just the best among flawed ones?",
-                "What would be the philosophical consequences of discovering an afterlife?",
-                "Are we already in a simulation without knowing it?",
-                "How could a civilization function without money?"
-            ]
-        };
+    <!-- Writing Section -->
+    <div class="writing-area">
+      <textarea placeholder="Start writing your thoughts..."></textarea>
+      <div id="word-count">Words: 0</div>
+    </div>
 
-        // DOM Elements
-        let maxWords = 200;
-        const elements = {
-            progressFill: document.querySelector('.progress-fill'),
-            milestones: document.querySelectorAll('.milestone'),
-            goalRange: document.getElementById('goal-range'),
-            goalValue: document.getElementById('goal-value'),
-            generateTopicBtn: document.getElementById("generate-topic"),
-            dailyTopic: document.getElementById("daily-topic"),
-            textarea: document.querySelector('textarea'),
-            wordCount: document.getElementById('word-count'),
-            saveBtn: document.getElementById('save-text'),
-            darkModeToggle: document.getElementById('toggle-dark-mode'),
-            modal: document.getElementById("copy-modal"),
-            closeModal: document.querySelector(".modal .close"),
-            copyBtn: document.getElementById("copy-btn"),
-            redirectBtn: document.getElementById("redirect-inleo")
-        };
+    <!-- Progress Section -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+        <div class="milestone" data-milestone="50">50</div>
+        <div class="milestone" data-milestone="100">100</div>
+        <div class="milestone" data-milestone="150">150</div>
+        <div class="milestone" data-milestone="200">200</div>
+      </div>
+    </div>
 
-        // Utility Functions
-        function createDifficultySelector() {
-            const selectorHTML = `
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="save-text">Save Progress</button>
+    </div>
+  </div>
+
+  <!-- Save Modal -->
+  <div id="copy-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>The WebApp is currently in V0. The save feature is not yet available.</p>
+      <p>To save your writing, simply click the button below to copy the text to your clipboard, then paste it into a
+        post on Hive.</p>
+      <button id="copy-btn" class="btn btn-copy">Copy the text</button>
+      <button id="redirect-inleo" class="btn" style="display: none;">Publish on InLeo</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    // Constants
+    const CHALLENGES = {
+      easy: [
+        "Describe your ideal day with no constraints.",
+        "Tell a funny anecdote that happened to you.",
+        "Describe your favorite place and why it is special to you.",
+        "Describe the best culinary experience you've had.",
+        "Tell a childhood memory that makes you smile.",
+        "Describe your dream house.",
+        "Describe your last weird dream in detail.",
+        "Describe a perfect rainy day.",
+        "What makes you happy?",
+        "Write about your favorite hobby.",
+        "Describe your perfect weekend.",
+        "If you could have any pet, real or imaginary, what would it be?",
+        "What is your favorite season and why?",
+        "Describe your dream vacation.",
+        "What is your favorite movie and why?",
+        "Tell a story about a time you laughed so hard you cried.",
+        "If you could live in any fictional world, which one would it be?",
+        "What is your favorite childhood toy?",
+        "Describe your favorite meal in detail.",
+        "If you could meet any historical figure, who would it be and why?",
+        "What is your go-to comfort food?",
+        "If you could instantly master any skill, what would it be?",
+        "What is your favorite way to relax?",
+        "Describe a perfect Sunday morning.",
+        "What is your favorite holiday tradition?",
+        "If you could have dinner with any celebrity, who would it be?",
+        "What is the best compliment you've ever received?",
+        "What is your favorite way to spend time with friends?",
+        "Describe a special moment with a loved one.",
+        "What is your favorite book and why?",
+      ],
+      medium: [
+        "If you could talk to your 10-year-old self, what would you say?",
+        "If you could have a superpower, which one would you choose and why?",
+        "Imagine you find a magical object on the street. What does it do?",
+        "If you had to live in a book, which one would you choose and why?",
+        "What would you do if you could go back in time for one day?",
+        "If you could create a new holiday, what would it be?",
+        "Imagine a world where animals can talk. What would your cat/dog say to you?",
+        "How has technology changed our daily lives?",
+        "What do you think of social media? Is it a blessing or a curse?",
+        "How does music influence our mindset?",
+        "If you could swap lives with someone for a week, who would it be and why?",
+        "Describe a futuristic invention that would improve daily life.",
+        "If you could master any musical instrument instantly, which one would you choose and why?",
+        "What historical event would you like to witness firsthand?",
+        "If you could spend a day with a fictional character, who would it be and why?",
+        "How would you design your own utopian city?",
+        "If you could rewrite the ending of any movie or book, which one would it be and how would you change it?",
+        "What would you do if you woke up with the ability to speak every language fluently?",
+        "How do you think the world will change in 50 years?",
+        "If you could start your own business tomorrow, what would it be?",
+        "What is one thing you wish was taught in school but isn't?",
+        "If you could only eat one type of cuisine for the rest of your life, which one would you choose and why?",
+        "Describe an invention that would make your daily routine easier.",
+        "If you could communicate with an alien species, what would you ask them?",
+        "What would a perfect day look like if money wasn’t an issue?",
+        "Would you rather be able to teleport anywhere or have the ability to stop time? Why?",
+        "If you had the power to change one world problem, what would it be and how would you solve it?",
+        "How do you think dreams connect to reality?",
+        "If you could live in any time period (past or future), which one would you choose and why?",
+        "What advice would you give to someone about to start their first job?"
+      ],
+      hard: [
+        "How will artificial intelligence transform our lives?",
+        "Imagine a society where money does not exist.",
+        "What are the ethical challenges of technological advancements?",
+        "Can artificial intelligence ever develop consciousness?",
+        "Are we alone in the universe? Develop your hypotheses.",
+        "If we could upload our consciousness into a computer, would we still be human?",
+        "Is democracy the perfect system or just the best among flawed ones?",
+        "What would be the philosophical consequences of discovering an afterlife?",
+        "Are we already in a simulation without knowing it?",
+        "How could a civilization function without money?",
+        "Is free will an illusion or a reality?",
+        "What are the biggest risks of genetic engineering in humans?",
+        "Could humanity survive without governments? What would such a society look like?",
+        "Is it possible to achieve true equality in society? Why or why not?",
+        "If time travel were possible, what ethical dilemmas would arise?",
+        "Can morality exist without religion?",
+        "What are the philosophical implications of a world where robots outnumber humans?",
+        "Is there an objective meaning to life, or is it entirely subjective?",
+        "What would be the consequences of achieving immortality?",
+        "If aliens made contact with Earth, how should humanity respond?",
+        "Should we colonize other planets, or focus on fixing Earth first?",
+        "Could a truly unbiased artificial intelligence exist?",
+        "Are emotions a weakness or a strength in decision-making?",
+        "What would happen if we discovered a parallel universe?",
+        "Should scientific discoveries be regulated to prevent potential dangers?",
+        "Is there a limit to human knowledge, or can we understand everything?",
+        "What are the potential dangers of merging human consciousness with AI?",
+        "Could a world government ever be functional, or would it lead to tyranny?",
+        "If all humans had identical intelligence and abilities, would society function better or worse?",
+        "What would be the social and psychological consequences of living in a virtual reality permanently?"
+      ]
+    };
+
+    // DOM Elements
+    let maxWords = 200;
+    const elements = {
+      progressFill: document.querySelector('.progress-fill'),
+      milestones: document.querySelectorAll('.milestone'),
+      goalRange: document.getElementById('goal-range'),
+      goalValue: document.getElementById('goal-value'),
+      generateTopicBtn: document.getElementById("generate-topic"),
+      dailyTopic: document.getElementById("daily-topic"),
+      textarea: document.querySelector('textarea'),
+      wordCount: document.getElementById('word-count'),
+      saveBtn: document.getElementById('save-text'),
+      darkModeToggle: document.getElementById('toggle-dark-mode'),
+      modal: document.getElementById("copy-modal"),
+      closeModal: document.querySelector(".modal .close"),
+      copyBtn: document.getElementById("copy-btn"),
+      redirectBtn: document.getElementById("redirect-inleo")
+    };
+
+    // Utility Functions
+    function createDifficultySelector() {
+      const selectorHTML = `
                 <div class="difficulty-selector">
                     <label for="difficulty">Challenge Difficulty:</label>
                     <select id="difficulty" class="difficulty-select">
@@ -138,31 +212,31 @@
                     </select>
                 </div>
             `;
-            elements.dailyTopic.insertAdjacentHTML('afterend', selectorHTML);
-        }
+      elements.dailyTopic.insertAdjacentHTML('afterend', selectorHTML);
+    }
 
-        function updateMilestones() {
-            const milestones = [0.25, 0.5, 0.75, 1];
-            elements.milestones.forEach((milestone, index) => {
-                const milestoneValue = Math.round(maxWords * milestones[index]);
-                milestone.setAttribute('data-milestone', milestoneValue);
-                milestone.textContent = milestoneValue;
-                milestone.style.left = (milestones[index] * 100) + '%';
-                milestone.style.transform = (milestones[index] === 1 ? 'translateX(-100%)' : 'translateX(-50%)');
-                milestone.classList.remove('triggered');
-            });
-        }
+    function updateMilestones() {
+      const milestones = [0.25, 0.5, 0.75, 1];
+      elements.milestones.forEach((milestone, index) => {
+        const milestoneValue = Math.round(maxWords * milestones[index]);
+        milestone.setAttribute('data-milestone', milestoneValue);
+        milestone.textContent = milestoneValue;
+        milestone.style.left = (milestones[index] * 100) + '%';
+        milestone.style.transform = (milestones[index] === 1 ? 'translateX(-100%)' : 'translateX(-50%)');
+        milestone.classList.remove('triggered');
+      });
+    }
 
-        function generateNewTopic() {
-            const difficulty = document.getElementById('difficulty').value;
-            const challenges = CHALLENGES[difficulty];
-            const topic = challenges[Math.floor(Math.random() * challenges.length)];
-            elements.dailyTopic.textContent = topic;
-        }
+    function generateNewTopic() {
+      const difficulty = document.getElementById('difficulty').value;
+      const challenges = CHALLENGES[difficulty];
+      const topic = challenges[Math.floor(Math.random() * challenges.length)];
+      elements.dailyTopic.textContent = topic;
+    }
 
-        function copyTextWithBanner() {
-            const userText = elements.textarea.value;
-            const promoBanner = `
+    function copyTextWithBanner() {
+      const userText = elements.textarea.value;
+      const promoBanner = `
 ---
 *This post was written with **[LexiStep](https://withesapces.github.io/1000words-a-day/)** - The daily writing accelerator*
 
@@ -170,109 +244,109 @@ LexiStep is a WebApp that helps you build a regular writing habit by providing t
 
 Created by [@genesisledger](https://hive.blog/@genesisledger) on Hive
 `;
-            return userText + "\n" + promoBanner;
-        }
+      return userText + "\n" + promoBanner;
+    }
 
-        // Event Listeners
-        function setupEventListeners() {
-            // Prevent copy/paste
-            elements.textarea.addEventListener('paste', (e) => {
-                e.preventDefault();
-                alert("Copy-pasting is disabled in this area.");
-            });
-            elements.textarea.addEventListener('copy', (e) => {
-                e.preventDefault();
-                alert("Copying is disabled.");
-            });
-            elements.textarea.addEventListener('cut', (e) => {
-                e.preventDefault();
-                alert("Cutting is disabled.");
-            });
+    // Event Listeners
+    function setupEventListeners() {
+      // Prevent copy/paste
+      elements.textarea.addEventListener('paste', (e) => {
+        e.preventDefault();
+        alert("Copy-pasting is disabled in this area.");
+      });
+      elements.textarea.addEventListener('copy', (e) => {
+        e.preventDefault();
+        alert("Copying is disabled.");
+      });
+      elements.textarea.addEventListener('cut', (e) => {
+        e.preventDefault();
+        alert("Cutting is disabled.");
+      });
 
-            // Word count and progress
-            elements.textarea.addEventListener('input', () => {
-                const words = elements.textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
-                const wordCount = words.length;
-                elements.wordCount.textContent = `Words: ${wordCount}`;
+      // Word count and progress
+      elements.textarea.addEventListener('input', () => {
+        const words = elements.textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+        const wordCount = words.length;
+        elements.wordCount.textContent = `Words: ${wordCount}`;
 
-                const progressPercent = Math.min((wordCount / maxWords) * 100, 100);
-                elements.progressFill.style.width = progressPercent + '%';
+        const progressPercent = Math.min((wordCount / maxWords) * 100, 100);
+        elements.progressFill.style.width = progressPercent + '%';
 
-                elements.milestones.forEach(milestone => {
-                    const milestoneValue = parseInt(milestone.getAttribute('data-milestone'), 10);
-                    if (wordCount >= milestoneValue && !milestone.classList.contains('triggered')) {
-                        milestone.classList.add('active', 'triggered');
-                        try {
-                            confetti({
-                                particleCount: 100,
-                                spread: 70,
-                                origin: { x: 0.5, y: 0.6 }
-                            });
-                        } catch (e) {
-                            console.error("Erreur lors du déclenchement des confettis :", e);
-                        }
-                        setTimeout(() => milestone.classList.remove('active'), 500);
-                    }
-                });
-            });
-
-            // Goal range
-            elements.goalRange.addEventListener('input', function() {
-                maxWords = parseInt(this.value, 10);
-                elements.goalValue.textContent = this.value;
-                updateMilestones();
-            });
-
-            // Dark mode
-            elements.darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                elements.darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
-            });
-
-            // Modal handling
-            elements.saveBtn.addEventListener('click', () => {
-                elements.modal.style.display = "block";
-            });
-
-            elements.closeModal.addEventListener('click', () => {
-                elements.modal.style.display = "none";
-            });
-
-            window.addEventListener('click', (event) => {
-                if (event.target === elements.modal) {
-                    elements.modal.style.display = "none";
-                }
-            });
-
-            // Copy functionality
-            elements.copyBtn.addEventListener('click', () => {
-                const textToCopy = copyTextWithBanner();
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    elements.copyBtn.textContent = "Copied!";
-                    elements.copyBtn.classList.add("copied");
-                    elements.redirectBtn.style.display = "inline-block";
-                    
-                    setTimeout(() => {
-                        elements.copyBtn.textContent = "Copy the text";
-                        elements.copyBtn.classList.remove("copied");
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Error while copying:', err);
-                });
-            });
-
-            elements.redirectBtn.addEventListener('click', () => {
-                window.open("https://inleo.io/publish", "_blank");
-            });
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            createDifficultySelector();
-            updateMilestones();
-            setupEventListeners();
-            elements.generateTopicBtn.addEventListener('click', generateNewTopic);
+        elements.milestones.forEach(milestone => {
+          const milestoneValue = parseInt(milestone.getAttribute('data-milestone'), 10);
+          if (wordCount >= milestoneValue && !milestone.classList.contains('triggered')) {
+            milestone.classList.add('active', 'triggered');
+            try {
+              confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: 0.5, y: 0.6 }
+              });
+            } catch (e) {
+              console.error("Erreur lors du déclenchement des confettis :", e);
+            }
+            setTimeout(() => milestone.classList.remove('active'), 500);
+          }
         });
-    </script>
+      });
+
+      // Goal range
+      elements.goalRange.addEventListener('input', function () {
+        maxWords = parseInt(this.value, 10);
+        elements.goalValue.textContent = this.value;
+        updateMilestones();
+      });
+
+      // Dark mode
+      elements.darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        elements.darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      });
+
+      // Modal handling
+      elements.saveBtn.addEventListener('click', () => {
+        elements.modal.style.display = "block";
+      });
+
+      elements.closeModal.addEventListener('click', () => {
+        elements.modal.style.display = "none";
+      });
+
+      window.addEventListener('click', (event) => {
+        if (event.target === elements.modal) {
+          elements.modal.style.display = "none";
+        }
+      });
+
+      // Copy functionality
+      elements.copyBtn.addEventListener('click', () => {
+        const textToCopy = copyTextWithBanner();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          elements.copyBtn.textContent = "Copied!";
+          elements.copyBtn.classList.add("copied");
+          elements.redirectBtn.style.display = "inline-block";
+
+          setTimeout(() => {
+            elements.copyBtn.textContent = "Copy the text";
+            elements.copyBtn.classList.remove("copied");
+          }, 2000);
+        }).catch(err => {
+          console.error('Error while copying:', err);
+        });
+      });
+
+      elements.redirectBtn.addEventListener('click', () => {
+        window.open("https://inleo.io/publish", "_blank");
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      updateMilestones();
+      setupEventListeners();
+      elements.generateTopicBtn.addEventListener('click', generateNewTopic);
+    });
+  </script>
 </body>
+
 </html>
